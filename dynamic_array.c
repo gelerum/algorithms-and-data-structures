@@ -33,7 +33,6 @@ int pop_front_dynamic_array(DynamicArray *array) {
     for (int i = 0; i < array->size - 1; i++) {
         array->data[i] = array->data[i + 1];
     }
-
     array->size--;
 
     return popped;
@@ -54,20 +53,4 @@ void print_dynamic_array(DynamicArray *array) {
         }
     }
     printf("\n");
-}
-
-int main() {
-    DynamicArray array = init_dynamic_array();
-
-    print_dynamic_array(&array); // output:
-    push_back_dynamic_array(&array, 2);
-    print_dynamic_array(&array); // output: 2
-    push_back_dynamic_array(&array, 5);
-    print_dynamic_array(&array); // output: 2 5
-    pop_front_dynamic_array(&array);
-    print_dynamic_array(&array); // output: 2 5 77
-
-    free_dynamic_array(&array);
-
-    return 0;
 }

@@ -15,6 +15,42 @@ DynamicArray init_dynamic_array() {
     return array;
 }
 
+int parent(int i) { return (i - 1) / 2; }
+int left_child(int i) { return 2 * i + 1; }
+int right_child(int i) { return 2 * i + 2; }
+
+void sift_up_min(DynamicArray *heap, int i) {
+    if (i == 1) {
+        return;
+    }
+    if (heap->data[i] < heap->data[parent(i)]) {
+        int tmp = heap->data[i];
+        heap->data[i] = heap->data[parent(i)];
+        heap->data[parent(i)] = tmp;
+        sift_up_min(heap, parent(i));
+    }
+}
+
+void sift_down_min(DynamicArray *heap, int i) {
+    int min_index = i;
+    int left = left_child(i);
+    int right = right_child(i);
+
+    if (left < heap->size && heap->data[left] < heap->data[min_index]) {
+        min_index = left;
+    }
+    if (right < heap->size && heap->data[right] < heap->data[min_index]) {
+        min_index = right;
+    }
+
+    if (min_index != i) {
+        int tmp = heap->data[i];
+        heap->data[i] = heap->data[min_index];
+        heap->data[min_index] = tmp;
+        sift_down_min(heap, min_index);
+    }
+}
+
 void push_back_dynamic_array(DynamicArray *array, int elemenet) {
     if (array->size == array->capacity) {
         array->data = realloc(array->data, 2 * array->capacity * sizeof(int));
@@ -29,13 +65,18 @@ int pop_front_dynamic_array(DynamicArray *array) {
         exit(EXIT_FAILURE);
     }
 
-    int popped = array->data[array->size - 1];
+    int popped = array->data[0];
     for (int i = 0; i < array->size - 1; i++) {
         array->data[i] = array->data[i + 1];
     }
-
     array->size--;
 
+    return popped;
+}
+
+int remove_min(DynamicArray *heap) {
+    int popped = pop_front_dynamic_array(heap);
+    sift_down_min(heap, 0);
     return popped;
 }
 
@@ -44,20 +85,6 @@ void free_dynamic_array(DynamicArray *array) {
     array->data = NULL;
     array->size = 0;
     array->capacity = 0;
-}
-
-int parent(int i) { return (i - 1) / 2; }
-
-void sift_up_min(DynamicArray *heap, int i) {
-    if (i == 1) {
-        return;
-    }
-    if (heap->data[i] < heap->data[parent(i)]) {
-        int tmp = heap->data[i];
-        heap->data[i] = heap->data[parent(i)];
-        heap->data[parent(i)] = tmp;
-        sift_up_min(heap, parent(i));
-    }
 }
 
 void insert_min(DynamicArray *heap, int element) {
@@ -74,5 +101,3 @@ void print_dynamic_array(DynamicArray *array) {
     }
     printf("\n");
 }
-
-int main() { return 0; }
